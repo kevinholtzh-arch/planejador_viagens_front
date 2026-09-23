@@ -80,7 +80,13 @@ planejador_viagens_front/
 
 ## Como executar
 
-Pré-requisito: [Docker](https://docs.docker.com/get-docker/) com Docker Compose.
+Pré-requisitos:
+
+- [Docker](https://docs.docker.com/get-docker/) com Docker Compose. Em versões antigas, troque `docker compose` por `docker-compose`.
+- Acesso à internet. O build baixa a API do GitHub, e a interface carrega o Chart.js via CDN e consulta a Open-Meteo.
+- Portas **8080** e **5000** livres.
+
+> A interface precisa ser executada pelo Docker. Abrir o `index.html` direto no navegador não funciona, porque as chamadas à API passam pelo proxy `/api` do Nginx.
 
 ### Opção 1: aplicação completa com Docker Compose (recomendado)
 
@@ -134,3 +140,21 @@ O `docker-compose.yml` constrói a **API** direto do repositório público [plan
 4. Acesse **http://localhost:8080**
 
 > O Nginx encaminha `/api` para `http://api:5000`. Para usar outro endereço, defina a variável de ambiente `API_URL` ao executar o container, por exemplo `-e API_URL=http://meu-host:5000`.
+
+Para parar e remover os containers e a rede:
+
+```bash
+docker rm -f front api
+docker network rm viagens
+```
+
+---
+
+## Solução de problemas
+
+- **Porta 5000 ou 8080 ocupada:** no macOS, o "Receptor AirPlay" costuma usar a porta 5000. Altere a porta publicada no `docker-compose.yml`, por exemplo de `"5000:5000"` para `"5001:5000"`, e acesse o Swagger em `http://localhost:5001/openapi/swagger`. A interface não é afetada, porque a comunicação entre os containers usa a porta interna 5000.
+- **Interface abre, mas a lista fica vazia e o "Registro de chamadas" mostra erro 504 na API:** o container da interface não está conseguindo acessar o container da API. Isso acontece em alguns ambientes Linux (por exemplo, GitHub Codespaces) em que uma regra de firewall antiga (`iptables-legacy`) bloqueia o tráfego entre containers. Libere com o comando abaixo e recarregue a página:
+
+  ```bash
+  sudo iptables-legacy -P FORWARD ACCEPT
+  ```
