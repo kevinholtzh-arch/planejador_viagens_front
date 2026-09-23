@@ -1,0 +1,234 @@
+:root {
+  --cor-primaria: #0f766e;
+  --cor-primaria-escura: #115e59;
+  --cor-secundaria: #0ea5e9;
+  --cor-perigo: #dc2626;
+  --cor-fundo: #f1f5f9;
+  --cor-painel: #ffffff;
+  --cor-texto: #0f172a;
+  --cor-texto-suave: #64748b;
+  --cor-borda: #e2e8f0;
+  --raio: 12px;
+  --sombra: 0 1px 3px rgba(15, 23, 42, 0.08), 0 4px 12px rgba(15, 23, 42, 0.04);
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  font-family: "Segoe UI", system-ui, -apple-system, Roboto, sans-serif;
+  background: var(--cor-fundo);
+  color: var(--cor-texto);
+}
+
+h1, h2, h3 { margin: 0; }
+h2 { font-size: 1.1rem; margin-bottom: 1rem; }
+
+/* ---------- Topo ---------- */
+.topo {
+  background: linear-gradient(120deg, var(--cor-primaria), var(--cor-secundaria));
+  color: #fff;
+  padding: 2rem 1rem;
+}
+.topo__conteudo { max-width: 1200px; margin: 0 auto; }
+.topo p { margin: 0.4rem 0 0; opacity: 0.9; }
+
+.container { max-width: 1200px; margin: -1.5rem auto 2rem; padding: 0 1rem; display: grid; gap: 1rem; }
+
+.painel {
+  background: var(--cor-painel);
+  border-radius: var(--raio);
+  box-shadow: var(--sombra);
+  padding: 1.25rem;
+  min-width: 0;
+}
+
+.colunas { display: grid; grid-template-columns: minmax(0, 2fr) minmax(0, 3fr); gap: 1rem; align-items: start; }
+
+/* ---------- Dashboard ---------- */
+.dashboard { display: grid; grid-template-columns: minmax(0, 3fr) minmax(0, 2fr); gap: 1rem; align-items: center; }
+.kpis { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.75rem; }
+.kpi {
+  border: 1px solid var(--cor-borda);
+  border-radius: var(--raio);
+  padding: 0.9rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+.kpi strong { font-size: 1.4rem; }
+.kpi__rotulo { font-size: 0.8rem; color: var(--cor-texto-suave); text-transform: uppercase; letter-spacing: 0.04em; }
+.kpi--destaque { background: #ecfeff; border-color: #a5f3fc; }
+.kpi--destaque strong { font-size: 1.05rem; }
+.grafico-status { height: 200px; }
+
+/* ---------- Formulários ---------- */
+label { display: block; font-size: 0.85rem; font-weight: 600; margin: 0.6rem 0 0.25rem; }
+input, select, textarea {
+  width: 100%;
+  padding: 0.55rem 0.7rem;
+  border: 1px solid var(--cor-borda);
+  border-radius: 8px;
+  font: inherit;
+  background: #fff;
+}
+input:focus, select:focus, textarea:focus { outline: 2px solid var(--cor-secundaria); outline-offset: 1px; }
+.linha { display: flex; gap: 0.5rem; }
+.grade-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; }
+.dica { color: var(--cor-texto-suave); font-size: 0.78rem; }
+.acoes { display: flex; justify-content: flex-end; gap: 0.5rem; margin-top: 1rem; }
+
+.botao {
+  border: none;
+  border-radius: 8px;
+  padding: 0.55rem 1rem;
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+  background: var(--cor-primaria);
+  color: #fff;
+  white-space: nowrap;
+  transition: background 0.15s, transform 0.1s;
+}
+.botao:hover { background: var(--cor-primaria-escura); }
+.botao:active { transform: scale(0.97); }
+.botao:disabled { opacity: 0.45; cursor: not-allowed; }
+.botao--secundario { background: var(--cor-secundaria); }
+.botao--secundario:hover { background: #0284c7; }
+.botao--neutro { background: #e2e8f0; color: var(--cor-texto); }
+.botao--neutro:hover { background: #cbd5e1; }
+.botao--perigo { background: #fee2e2; color: var(--cor-perigo); }
+.botao--perigo:hover { background: #fecaca; }
+.botao--pequeno { padding: 0.35rem 0.7rem; font-size: 0.8rem; }
+
+.resultados-cidade { list-style: none; padding: 0; margin: 0.5rem 0 0; display: grid; gap: 0.35rem; }
+.resultados-cidade button {
+  width: 100%;
+  text-align: left;
+  background: #f8fafc;
+  border: 1px solid var(--cor-borda);
+  border-radius: 8px;
+  padding: 0.5rem 0.7rem;
+  font: inherit;
+  cursor: pointer;
+}
+.resultados-cidade button:hover { border-color: var(--cor-secundaria); background: #f0f9ff; }
+
+.cidade-selecionada {
+  margin-top: 0.75rem;
+  padding: 0.6rem 0.8rem;
+  background: #f0fdfa;
+  border: 1px solid #99f6e4;
+  border-radius: 8px;
+  font-weight: 600;
+}
+
+/* ---------- Listagem ---------- */
+.filtros { display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 0.5rem; margin-bottom: 0.75rem; }
+.lista-destinos { list-style: none; padding: 0; margin: 0; display: grid; gap: 0.5rem; }
+.destino {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem;
+  border: 1px solid var(--cor-borda);
+  border-radius: var(--raio);
+  animation: surgir 0.25s ease;
+}
+.destino__info { display: flex; flex-direction: column; gap: 0.2rem; min-width: 0; }
+.destino__info small { color: var(--cor-texto-suave); }
+.destino__obs { font-style: italic; }
+.destino__acoes { display: flex; gap: 0.35rem; flex-shrink: 0; }
+.vazio { color: var(--cor-texto-suave); padding: 0.75rem; text-align: center; }
+
+.badge { align-self: flex-start; font-size: 0.72rem; font-weight: 700; padding: 0.15rem 0.55rem; border-radius: 999px; }
+.badge--planejado { background: #fef3c7; color: #92400e; }
+.badge--confirmado { background: #dbeafe; color: #1e40af; }
+.badge--concluido { background: #dcfce7; color: #166534; }
+
+.paginacao { display: flex; justify-content: space-between; align-items: center; margin-top: 0.75rem; font-size: 0.85rem; color: var(--cor-texto-suave); }
+
+/* ---------- Clima ---------- */
+.subtitulo { margin: -0.5rem 0 1rem; color: var(--cor-texto-suave); }
+.clima { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 1rem; }
+.clima__grafico { height: 260px; }
+.clima__dias { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.35rem; }
+.clima__dias li {
+  display: grid;
+  grid-template-columns: 6.5rem 2rem 1fr auto auto;
+  gap: 0.5rem;
+  align-items: center;
+  padding: 0.4rem 0.6rem;
+  border-radius: 8px;
+  background: #f8fafc;
+  font-size: 0.88rem;
+}
+.clima__icone { font-size: 1.3rem; }
+.clima__data { text-transform: capitalize; color: var(--cor-texto-suave); }
+.clima__chuva { color: #0369a1; }
+
+/* ---------- Registro de chamadas ---------- */
+.cabecalho-log { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem; }
+.cabecalho-log h2 { margin: 0; }
+.log-chamadas {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  max-height: 220px;
+  overflow-y: auto;
+  font-family: Consolas, "Courier New", monospace;
+  font-size: 0.8rem;
+}
+.log-chamadas li {
+  display: grid;
+  grid-template-columns: 5rem 7rem 4.2rem 1fr auto;
+  gap: 0.5rem;
+  align-items: center;
+  padding: 0.3rem 0.4rem;
+  border-bottom: 1px dashed var(--cor-borda);
+  animation: surgir 0.25s ease;
+}
+.log__url { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.log__componente { font-weight: 700; padding: 0.1rem 0.4rem; border-radius: 6px; text-align: center; }
+.log__componente--api { background: #ccfbf1; color: #115e59; }
+.log__componente--externo { background: #e0f2fe; color: #075985; }
+.log__metodo { font-weight: 700; }
+.log__metodo--get { color: #16a34a; }
+.log__metodo--post { color: #d97706; }
+.log__metodo--put { color: #2563eb; }
+.log__metodo--delete { color: #dc2626; }
+.log__status--ok { color: #16a34a; }
+.log__status--erro { color: #dc2626; }
+
+/* ---------- Modal e toasts ---------- */
+.modal { border: none; border-radius: var(--raio); padding: 1.25rem; width: min(480px, 92vw); box-shadow: var(--sombra); }
+.modal::backdrop { background: rgba(15, 23, 42, 0.45); }
+
+.toasts { position: fixed; right: 1rem; bottom: 1rem; display: grid; gap: 0.5rem; z-index: 10; }
+.toast {
+  padding: 0.7rem 1rem;
+  border-radius: 8px;
+  color: #fff;
+  font-weight: 600;
+  box-shadow: var(--sombra);
+  animation: surgir 0.25s ease;
+}
+.toast--sucesso { background: #16a34a; }
+.toast--erro { background: var(--cor-perigo); }
+
+.rodape { text-align: center; color: var(--cor-texto-suave); font-size: 0.8rem; padding: 0 1rem 2rem; }
+.rodape a { color: var(--cor-primaria); }
+
+@keyframes surgir {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: none; }
+}
+
+/* ---------- Responsivo ---------- */
+@media (max-width: 900px) {
+  .colunas, .dashboard, .clima { grid-template-columns: minmax(0, 1fr); }
+  .filtros { grid-template-columns: 1fr; }
+  .destino { flex-direction: column; align-items: stretch; }
+  .log-chamadas li { grid-template-columns: 1fr; }
+}

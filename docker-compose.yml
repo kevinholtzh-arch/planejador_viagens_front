@@ -1,0 +1,20 @@
+services:
+  api:
+    # Constrói a API a partir do seu repositório público no GitHub
+    build: https://github.com/kevinholtzh-arch/planejador_viagens_api.git#main
+    container_name: planejador_viagens_api
+    ports:
+      - "5000:5000"
+    volumes:
+      - api_database:/app/database
+
+  front:
+    build: .
+    container_name: planejador_viagens_front
+    ports:
+      - "8080:80"
+    depends_on:
+      - api
+
+volumes:
+  api_database:

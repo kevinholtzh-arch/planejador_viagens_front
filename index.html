@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Planejador de Viagens</title>
+  <link rel="stylesheet" href="css/styles.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+  <script src="js/config.js"></script>
+</head>
+<body>
+  <header class="topo">
+    <div class="topo__conteudo">
+      <h1>✈️ Planejador de Viagens</h1>
+      <p>Organize seus destinos, acompanhe o orçamento e consulte a previsão do tempo antes de viajar.</p>
+    </div>
+  </header>
+
+  <main class="container">
+    <!-- Dashboard -->
+    <section class="painel" aria-labelledby="titulo-dashboard">
+      <h2 id="titulo-dashboard">Resumo</h2>
+      <div class="dashboard">
+        <div class="kpis">
+          <div class="kpi"><span class="kpi__rotulo">Destinos</span><strong id="kpi-total">0</strong></div>
+          <div class="kpi"><span class="kpi__rotulo">Orçamento total</span><strong id="kpi-orcamento">R$ 0,00</strong></div>
+          <div class="kpi"><span class="kpi__rotulo">Dias de viagem</span><strong id="kpi-dias">0</strong></div>
+          <div class="kpi kpi--destaque">
+            <span class="kpi__rotulo">Próxima viagem</span>
+            <strong id="kpi-proxima">—</strong>
+            <small id="kpi-proxima-detalhe"></small>
+          </div>
+        </div>
+        <div class="grafico-status">
+          <canvas id="grafico-status" aria-label="Destinos por status" role="img"></canvas>
+        </div>
+      </div>
+    </section>
+
+    <div class="colunas">
+      <!-- Cadastro -->
+      <section class="painel" aria-labelledby="titulo-cadastro">
+        <h2 id="titulo-cadastro">Novo destino</h2>
+        <form id="form-busca-cidade" class="busca-cidade">
+          <label for="campo-cidade">Cidade</label>
+          <div class="linha">
+            <input id="campo-cidade" type="text" placeholder="Ex.: Lisboa" required>
+            <button type="submit" class="botao botao--secundario">Buscar</button>
+          </div>
+          <small class="dica">A cidade é buscada na API externa Open-Meteo (geocodificação).</small>
+        </form>
+        <ul id="resultados-cidade" class="resultados-cidade"></ul>
+
+        <form id="form-destino" class="form-destino" hidden>
+          <div class="cidade-selecionada" id="cidade-selecionada"></div>
+          <div class="grade-2">
+            <div>
+              <label for="campo-data-ida">Data de ida</label>
+              <input id="campo-data-ida" type="date" required>
+            </div>
+            <div>
+              <label for="campo-data-volta">Data de volta</label>
+              <input id="campo-data-volta" type="date" required>
+            </div>
+          </div>
+          <div class="grade-2">
+            <div>
+              <label for="campo-orcamento">Orçamento (R$)</label>
+              <input id="campo-orcamento" type="number" min="0" step="0.01" value="0">
+            </div>
+            <div>
+              <label for="campo-status">Status</label>
+              <select id="campo-status">
+                <option value="planejado">Planejado</option>
+                <option value="confirmado">Confirmado</option>
+                <option value="concluido">Concluído</option>
+              </select>
+            </div>
+          </div>
+          <label for="campo-observacoes">Observações</label>
+          <textarea id="campo-observacoes" rows="2" maxlength="500"></textarea>
+          <div class="acoes">
+            <button type="button" id="botao-cancelar-cadastro" class="botao botao--neutro">Cancelar</button>
+            <button type="submit" class="botao">Salvar destino</button>
+          </div>
+        </form>
+      </section>
+
+      <!-- Listagem -->
+      <section class="painel" aria-labelledby="titulo-lista">
+        <h2 id="titulo-lista">Meus destinos</h2>
+        <div class="filtros">
+          <input id="filtro-busca" type="search" placeholder="Buscar cidade ou país">
+          <select id="filtro-status">
+            <option value="">Todos os status</option>
+            <option value="planejado">Planejado</option>
+            <option value="confirmado">Confirmado</option>
+            <option value="concluido">Concluído</option>
+          </select>
+          <select id="filtro-ordenacao">
+            <option value="data_ida:asc">Data de ida ↑</option>
+            <option value="data_ida:desc">Data de ida ↓</option>
+            <option value="orcamento:desc">Maior orçamento</option>
+            <option value="orcamento:asc">Menor orçamento</option>
+            <option value="cidade:asc">Cidade A-Z</option>
+          </select>
+        </div>
+        <ul id="lista-destinos" class="lista-destinos"></ul>
+        <div class="paginacao">
+          <button id="pagina-anterior" class="botao botao--neutro" type="button">‹ Anterior</button>
+          <span id="pagina-info">Página 1</span>
+          <button id="pagina-proxima" class="botao botao--neutro" type="button">Próxima ›</button>
+        </div>
+      </section>
+    </div>
+
+    <!-- Previsão do tempo -->
+    <section class="painel" id="painel-clima" aria-labelledby="titulo-clima" hidden>
+      <h2 id="titulo-clima">Previsão do tempo</h2>
+      <p id="clima-subtitulo" class="subtitulo"></p>
+      <div class="clima">
+        <div class="clima__grafico"><canvas id="grafico-clima" aria-label="Temperaturas dos próximos dias" role="img"></canvas></div>
+        <ul id="clima-dias" class="clima__dias"></ul>
+      </div>
+    </section>
+
+    <!-- Registro de chamadas -->
+    <section class="painel" aria-labelledby="titulo-log">
+      <div class="cabecalho-log">
+        <h2 id="titulo-log">Registro de chamadas entre componentes</h2>
+        <button id="botao-limpar-log" class="botao botao--neutro" type="button">Limpar</button>
+      </div>
+      <ol id="log-chamadas" class="log-chamadas"></ol>
+    </section>
+  </main>
+
+  <!-- Modal de edição -->
+  <dialog id="modal-edicao" class="modal">
+    <form id="form-edicao" method="dialog">
+      <h3 id="modal-titulo">Editar destino</h3>
+      <div class="grade-2">
+        <div>
+          <label for="edicao-data-ida">Data de ida</label>
+          <input id="edicao-data-ida" type="date" required>
+        </div>
+        <div>
+          <label for="edicao-data-volta">Data de volta</label>
+          <input id="edicao-data-volta" type="date" required>
+        </div>
+      </div>
+      <div class="grade-2">
+        <div>
+          <label for="edicao-orcamento">Orçamento (R$)</label>
+          <input id="edicao-orcamento" type="number" min="0" step="0.01">
+        </div>
+        <div>
+          <label for="edicao-status">Status</label>
+          <select id="edicao-status">
+            <option value="planejado">Planejado</option>
+            <option value="confirmado">Confirmado</option>
+            <option value="concluido">Concluído</option>
+          </select>
+        </div>
+      </div>
+      <label for="edicao-observacoes">Observações</label>
+      <textarea id="edicao-observacoes" rows="2" maxlength="500"></textarea>
+      <div class="acoes">
+        <button type="button" id="botao-fechar-modal" class="botao botao--neutro">Cancelar</button>
+        <button type="submit" class="botao">Salvar alterações</button>
+      </div>
+    </form>
+  </dialog>
+
+  <div id="toasts" class="toasts" aria-live="polite"></div>
+
+  <footer class="rodape">
+    Dados meteorológicos e de geolocalização por <a href="https://open-meteo.com/" target="_blank" rel="noopener">Open-Meteo.com</a>
+    (licença <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener">CC BY 4.0</a>).
+  </footer>
+
+  <script type="module" src="js/app.js"></script>
+</body>
+</html>
